@@ -24,15 +24,34 @@ st.markdown("Interactive UI built from the original analysis file")
 # gdown.download(url, output, quiet=False)
 # df = pd.read_csv(output)
 
-import gdown
-import os
-url = f"https://drive.google.com/uc?id=1mU7OYUaC2Dl8pOWUnNoeFvx5uBQ9sJC9"
-output = "instagram_usage_lifestyle.csv"
+#3333 import gdown
+# import os
+# url = f"https://drive.google.com/uc?id=1mU7OYUaC2Dl8pOWUnNoeFvx5uBQ9sJC9"
+# output = "instagram_usage_lifestyle.csv"
 
-if not os.path.exists(output):
-    gdown.download(url, output, quiet=False, fuzzy=True)
+# if not os.path.exists(output):
+#     gdown.download(url, output, quiet=False, fuzzy=True)
 
-df = pd.read_csv(output,nrows=200000)
+# df = pd.read_csv(output,nrows=200000)
+
+@st.cache_data
+def load_data():
+    output = "instagram_usage_lifestyle.csv"
+    
+    # Step 1: Check if file exists locally
+    if not os.path.exists(output):
+        # Step 2: Download only if missing
+        import gdown
+        url = "https://drive.google.com/uc?id=1mU7OYUaC2Dl8pOWUnNoeFvx5uBQ9sJC9"
+        gdown.download(url, output, quiet=False, fuzzy=True)
+    
+    # Step 3: Load only once into pandas
+    df = pd.read_csv(output, nrows=200000)
+    return df
+
+# Step 4: Call function
+with st.spinner("Loading data..."):
+    df = load_data()
 
 
 # -------------------- DROP COLUMNS (FROM ORIGINAL FILE) --------------------
@@ -200,4 +219,5 @@ with col4:
     st.pyplot(fig12)
 
 st.success("✅ Dashboard Loaded Successfully (Safe Mode)")
+
 
